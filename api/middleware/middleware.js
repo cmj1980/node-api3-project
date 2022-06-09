@@ -1,6 +1,6 @@
+const Users = require('../users/users-model');
 function logger(req, res, next) {
-  // DO YOUR MAGIC
-  const timestamp = new Date().toLocaleString()
+  const timestamp = new Date().toDateString()
   const method = req.method
   const url = req.originalUrl
   console.log(`[${timestamp}] ${method} to ${url}`)
@@ -8,27 +8,61 @@ function logger(req, res, next) {
 }
 
 function validateUserId(req, res, next) {
-  // DO YOUR MAGIC
-  console.log('validateUserId')
-  next()
+  Users.getById(req.params.id)
+    .then(userObject => {
+      if (userObject == null) {
+        next({
+          status: 404,
+          message: "user not found"
+        })
+        return;
+      }
+      req.user = userObject;
+      next();
+    })
+    .catch(next)
 }
 
+
 function validateUser(req, res, next) {
-  // DO YOUR MAGIC
-  console.log('validateUser')
-  next()
+  const {
+    name
+  } = req.body;
+  if (!req.body.name || typeof name !== 'string' || name.trim() === '') {
+    next({
+      status: 400,
+      message: "missing required name field"
+    })
+    return;
+  }
+  req.body = {
+    name: name.trim()
+  }
+  next();
 }
 
 function validatePost(req, res, next) {
-  // DO YOUR MAGIC
-  console.log('validatePost')
+  let {
+    text
+  } = req.body;
+  if (!req.body.text || typeof text !== 'string' || text.trim() === '') {
+    next({
+      status: 400,
+      message: "missing required text field"
+    });
+    return;
+  }
+  req.body = {
+    text: text.trim(),
+    user_id: req.params.id
+  }
   next()
 }
 
 // do not forget to expose these functions to other modules
-module.exports = { 
+module.exports = {
   logger,
   validateUserId,
   validateUser,
-  validatePost, 
+  validatePost,
 };
