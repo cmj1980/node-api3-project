@@ -14,10 +14,10 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
   Users.get()
-  .then(arr => {
-    res.json(arr);
-  })
-  .catch(next)
+    .then(arr => {
+      res.json(arr);
+    })
+    .catch(next)
 });
 
 router.get('/:id', validateUserId, (req, res) => {
@@ -56,8 +56,8 @@ router.get('/:id/posts', validateUserId, (req, res, next) => {
 
 router.post('/:id/posts', validateUserId, validatePost, (req, res, next) => {
   Post.insert(req.body)
-  .then(newUserPost => res.json(newUserPost))
-  .catch(next)
+    .then(newUserPost => res.json(newUserPost))
+    .catch(next)
 });
 
 // do not forget to export the router

@@ -1,4 +1,5 @@
 const Users = require('../users/users-model');
+
 function logger(req, res, next) {
   const timestamp = new Date().toDateString()
   const method = req.method
